@@ -19,9 +19,9 @@ func main() {
 	controllers.RegisterCarRoutes(router)
 	controllers.RegisterUserRoutes(router)
 
-	// HTTP серверді іске қосамыз
+	//серверді іске қосамыз
 	server := &http.Server{
-		Addr:    ":8080",
+		Addr:    ":8081", // мысалы, 8081
 		Handler: router,
 	}
 
