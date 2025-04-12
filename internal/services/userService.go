@@ -10,10 +10,6 @@ func GetUsers() []models.User {
 	return users
 }
 
-func CreateUser(user models.User) {
-	DB.Create(&user)
-}
-
 func UpdateUser(id string, user models.User) {
 	DB.Model(&models.User{}).Where("id = ?", id).Updates(user)
 }

@@ -1,0 +1,40 @@
+# Git
+.git
+.gitignore
+
+# Golang
+*.exe
+*.exe~
+*.dll
+*.so
+*.dylib
+*.test
+*.out
+
+# IDE
+.idea/
+.vscode/
+
+# Dependency directories
+vendor/
+
+# Local database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Logs
+*.log
+
+# Binaries for programs and plugins
+bin/
+dist/
+
+# Docker related
+.dockerignore
+Dockerfile
+docker-compose.yml
+
+# Misc
+README.md
+LICENSE 

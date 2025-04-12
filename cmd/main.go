@@ -2,31 +2,38 @@ package main
 
 import (
 	"Cars/internal/controllers"
+	"Cars/internal/middleware"
 	"Cars/internal/services"
 	"github.com/gin-gonic/gin"
-	"log"
-	"net/http"
 )
 
 func main() {
-	// Мәліметтер базасына қосылу
 	services.ConnectDatabase()
-
-	// Gin роутерін құру
 	router := gin.Default()
 
-	// Маршруттарды тіркеу. Құрылғыны (router) функцияға өткізіңіз.
-	controllers.RegisterCarRoutes(router)
-	controllers.RegisterUserRoutes(router)
+	// Публичные маршруты
+	router.POST("/signup", controllers.Signup)
+	router.POST("/login", controllers.Login)
 
-	// HTTP серверді іске қосамыз
-	server := &http.Server{
-		Addr:    ":8080",
-		Handler: router,
+	// Защищенные маршруты для пользователей (чтение)
+	userRoutes := router.Group("/api")
+	userRoutes.Use(middleware.AuthMiddleware())
+	{
+		userRoutes.GET("/cars", controllers.GetCars)
+		userRoutes.GET("/cars/:id", controllers.GetCarByID)
+		userRoutes.GET("/profile", func(c *gin.Context) {
+			c.JSON(200, gin.H{"message": "Аутентификация прошла успешно"})
+		})
 	}
 
-	log.Println("Server running on :8080")
-	if err := server.ListenAndServe(); err != nil {
-		log.Fatal(err)
+	// Защищенные маршруты для администраторов (полный CRUD)
+	adminRoutes := router.Group("/api/admin")
+	adminRoutes.Use(middleware.AuthMiddleware(), middleware.AdminMiddleware())
+	{
+		adminRoutes.POST("/cars", controllers.CreateCar)
+		adminRoutes.PUT("/cars/:id", controllers.UpdateCar)
+		adminRoutes.DELETE("/cars/:id", controllers.DeleteCar)
 	}
+
+	router.Run(":8080")
 }
